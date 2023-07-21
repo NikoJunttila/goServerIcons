@@ -52,28 +52,35 @@ func serveIconsOxygen(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type IconData struct {
+	Theme string   `json:"theme"`
+	Icons []string `json:"icons"`
+}
+
 // POSTS
 func postIconsCentria(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Failed to read request body", http.StatusInternalServerError)
-		return
-	}
-	icons := getIcons("./icons/centria/", "")
-	neededIcons := parseItems(string(body))
 
+	// Parse the JSON payload from the request body
+	var data IconData
+	fmt.Printf(data.Theme)
+	err := json.NewDecoder(r.Body).Decode(&data)
+	icons := getIcons(fmt.Sprintf("./icons/%s/", data.Theme), "")
 	var newArray []Icon
+	if err != nil {
+		fmt.Println("error oopsie")
+	}
 	for _, icon := range icons {
-		if containsString(neededIcons, icon.Name) {
+		if containsString(data.Icons, icon.Name) {
 			newArray = append(newArray, icon)
 		}
 	}
+	// You can access the received data now
 
-	// Send the response back to the client
-
+	fmt.Printf("Icons: %v\n", data.Icons)
+	// Sending the response back to the client as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(newArray)
 }
