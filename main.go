@@ -14,6 +14,7 @@ func main() {
 	http.Handle("/icons/", http.StripPrefix("/icons/", fs))
 	http.HandleFunc("/get/", serveIcons)
 	http.HandleFunc("/post/centria", postIcons)
+	http.HandleFunc("/search", searchIcons)
 
 	server := &http.Server{
 		Addr:         ":8080",

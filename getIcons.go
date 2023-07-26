@@ -17,7 +17,7 @@ type Icon struct {
 	SIZE string `json:"size"`
 }
 
-func getIcons(folderPath string, searchTerm string) []Icon {
+func getIcons(folderPath string, searchTerm string, limit int) []Icon {
 	var icons []Icon
 
 	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
@@ -40,7 +40,7 @@ func getIcons(folderPath string, searchTerm string) []Icon {
 					fmt.Println(path)
 					fmt.Println(newIcon.SIZE)
 					icons = append(icons, newIcon)
-					if len(icons) >= 200 {
+					if len(icons) > limit {
 						return filepath.SkipDir
 					}
 				}

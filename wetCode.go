@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// get request
 func serveIcons(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -22,7 +23,7 @@ func serveIcons(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	icons := getIcons(fmt.Sprintf("./icons/%s/", selectedValue), "")
+	icons := getIcons(fmt.Sprintf("./icons/%s/", selectedValue), "", 40)
 	err := json.NewEncoder(w).Encode(icons)
 	if err != nil {
 		http.Error(w, "Couldn't encode JSON", http.StatusInternalServerError)
@@ -47,7 +48,7 @@ func postIcons(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("error oopsie")
 	}
-	icons := getIcons(fmt.Sprintf("./icons/%s/", data.Theme), "")
+	icons := getIcons(fmt.Sprintf("./icons/%s/", data.Theme), "", 10000)
 	var newArray []Icon
 	for _, icon := range icons {
 		if containsString(data.Icons, icon.Name) {
@@ -57,4 +58,26 @@ func postIcons(w http.ResponseWriter, r *http.Request) {
 	// Sending the response back to the client as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(newArray)
+}
+
+type searchReq struct {
+	Theme      string `json:"theme"`
+	SearchTerm string `json:"searchTerm"`
+}
+
+func searchIcons(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	// Parse the JSON payload from the request body
+	var data searchReq
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		fmt.Println("error oopsie")
+	}
+	icons := getIcons(fmt.Sprintf("./icons/%s/", data.Theme), data.SearchTerm, 1000)
+	// Sending the response back to the client as JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(icons)
 }
