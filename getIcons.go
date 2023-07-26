@@ -2,14 +2,19 @@ package main
 
 import (
 	"fmt"
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
 type Icon struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
+	SIZE string `json:"size"`
 }
 
 func getIcons(folderPath string, searchTerm string) []Icon {
@@ -31,6 +36,9 @@ func getIcons(folderPath string, searchTerm string) []Icon {
 					fileNameWithoutExtension := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 					newIcon.Name = fileNameWithoutExtension
 					newIcon.URL = "http://localhost:8080/" + path
+					newIcon.SIZE = getResolution(path)
+					fmt.Println(path)
+					fmt.Println(newIcon.SIZE)
 					icons = append(icons, newIcon)
 					if len(icons) >= 200 {
 						return filepath.SkipDir
@@ -45,26 +53,7 @@ func getIcons(folderPath string, searchTerm string) []Icon {
 	}
 	return icons
 }
-func parseItems(inputString string) []string {
-	// Step 1: Remove the brackets and quote marks from the input string
-	inputString = strings.ReplaceAll(inputString, "[", "")
-	inputString = strings.ReplaceAll(inputString, "]", "")
-	inputString = strings.ReplaceAll(inputString, `"`, "")
 
-	// Step 2: Split the input string based on comma separator
-	items := strings.Split(inputString, ",")
-
-	// Step 3: Create a new array to hold the cleaned-up items
-	var cleanedItems []string
-
-	// Step 4: Loop through each item to clean it up and add it to the cleanedItems array
-	for _, item := range items {
-		cleanedItem := strings.TrimSpace(item) // Remove leading and trailing whitespaces
-		cleanedItems = append(cleanedItems, cleanedItem)
-	}
-
-	return cleanedItems
-}
 func containsString(arr []string, target string) bool {
 	for _, str := range arr {
 		if str == target {
@@ -72,4 +61,37 @@ func containsString(arr []string, target string) bool {
 		}
 	}
 	return false
+}
+
+func getResolution(imagePath string) string {
+
+	if filepath.Ext(imagePath) == ".svg" {
+		baseFolderName := getBaseFolderName(imagePath)
+		if strings.Contains(baseFolderName, "@") {
+			size := strings.Split(baseFolderName, "@")
+			return size[0] + "x" + size[0]
+		}
+		return baseFolderName + "x" + baseFolderName
+	}
+	file, err := os.Open(imagePath)
+	if err != nil {
+		fmt.Println("Error opening image:", err)
+		return "error"
+	}
+	defer file.Close()
+
+	img, _, err := image.DecodeConfig(file)
+	if err != nil {
+		fmt.Println("Error decoding image:", err)
+		return "error"
+	}
+	if strings.Contains(imagePath, "@") {
+		return strconv.Itoa(img.Width/2) + "x" + strconv.Itoa(img.Height/2)
+	}
+	return strconv.Itoa(img.Width) + "x" + strconv.Itoa(img.Height)
+}
+func getBaseFolderName(filePath string) string {
+	dir := filepath.Dir(filePath)
+	base := filepath.Base(dir)
+	return base
 }

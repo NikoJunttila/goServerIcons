@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -14,8 +15,16 @@ func main() {
 	http.HandleFunc("/get/", serveIcons)
 	http.HandleFunc("/post/centria", postIcons)
 
+	server := &http.Server{
+		Addr:         ":8080",
+		Handler:      http.DefaultServeMux,
+		ReadTimeout:  60 * time.Second,
+		WriteTimeout: 60 * time.Second,
+		IdleTimeout:  120 * time.Second,
+	}
+
 	fmt.Println("serving at port: 8080")
-	err := http.ListenAndServe(":8080", nil)
+	err := server.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}

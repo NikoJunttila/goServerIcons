@@ -44,11 +44,11 @@ func postIcons(w http.ResponseWriter, r *http.Request) {
 	// Parse the JSON payload from the request body
 	var data IconData
 	err := json.NewDecoder(r.Body).Decode(&data)
-	icons := getIcons(fmt.Sprintf("./icons/%s/", data.Theme), "")
-	var newArray []Icon
 	if err != nil {
 		fmt.Println("error oopsie")
 	}
+	icons := getIcons(fmt.Sprintf("./icons/%s/", data.Theme), "")
+	var newArray []Icon
 	for _, icon := range icons {
 		if containsString(data.Icons, icon.Name) {
 			newArray = append(newArray, icon)
