@@ -37,7 +37,7 @@ type IconData struct {
 }
 
 // POSTS
-func postIcons(w http.ResponseWriter, r *http.Request) {
+func iconsFromListOfNames(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
@@ -46,18 +46,12 @@ func postIcons(w http.ResponseWriter, r *http.Request) {
 	var data IconData
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		fmt.Println("error oopsie")
+		fmt.Println(err)
 	}
-	icons := getIcons(fmt.Sprintf("./icons/%s/", data.Theme), "", 10000)
-	var newArray []Icon
-	for _, icon := range icons {
-		if containsString(data.Icons, icon.Name) {
-			newArray = append(newArray, icon)
-		}
-	}
+	icons := getIconsFromArray(fmt.Sprintf("./icons/%s/", data.Theme), data.Icons)
 	// Sending the response back to the client as JSON
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(newArray)
+	json.NewEncoder(w).Encode(icons)
 }
 
 type searchReq struct {

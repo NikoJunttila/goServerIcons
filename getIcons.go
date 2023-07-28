@@ -54,6 +54,41 @@ func getIcons(folderPath string, searchTerm string, limit int) []Icon {
 	return icons
 }
 
+func getIconsFromArray(folderPath string, containsArr []string) []Icon {
+	var icons []Icon
+
+	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() {
+			if strings.HasSuffix(strings.ToLower(info.Name()), ".svg") ||
+				strings.HasSuffix(strings.ToLower(info.Name()), ".png") ||
+				strings.HasSuffix(strings.ToLower(info.Name()), ".jpg") ||
+				strings.HasSuffix(strings.ToLower(info.Name()), ".jpeg") {
+				var newIcon Icon
+				fileName := filepath.Base(path)
+				fileNameWithoutExtension := strings.TrimSuffix(fileName, filepath.Ext(fileName))
+				if containsString(containsArr, fileNameWithoutExtension) {
+					newIcon.Name = fileNameWithoutExtension
+					newIcon.URL = "http://localhost:8080/" + path
+					newIcon.SIZE = getResolution(path)
+					fmt.Println(path)
+					fmt.Println(newIcon.SIZE)
+					icons = append(icons, newIcon)
+				}
+
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	return icons
+}
+
 func containsString(arr []string, target string) bool {
 	for _, str := range arr {
 		if str == target {
