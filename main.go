@@ -8,7 +8,6 @@ import (
 
 func main() {
 	iconsDir := "./icons/"
-
 	fs := http.FileServer(http.Dir(iconsDir))
 
 	http.Handle("/icons/", http.StripPrefix("/icons/", fs))
@@ -16,6 +15,7 @@ func main() {
 	http.HandleFunc("/post/centria", iconsFromListOfNames)
 	http.HandleFunc("/search", searchIcons)
 	http.HandleFunc("/download", handleDownload)
+	http.HandleFunc("/iconsets", getIconSetsNames)
 
 	server := &http.Server{
 		Addr:         ":8080",

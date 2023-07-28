@@ -37,8 +37,6 @@ func getIcons(folderPath string, searchTerm string, limit int) []Icon {
 					newIcon.Name = fileNameWithoutExtension
 					newIcon.URL = "http://localhost:8080/" + path
 					newIcon.SIZE = getResolution(path)
-					fmt.Println(path)
-					fmt.Println(newIcon.SIZE)
 					icons = append(icons, newIcon)
 					if len(icons) > limit {
 						return filepath.SkipDir
@@ -74,8 +72,6 @@ func getIconsFromArray(folderPath string, containsArr []string) []Icon {
 					newIcon.Name = fileNameWithoutExtension
 					newIcon.URL = "http://localhost:8080/" + path
 					newIcon.SIZE = getResolution(path)
-					fmt.Println(path)
-					fmt.Println(newIcon.SIZE)
 					icons = append(icons, newIcon)
 				}
 

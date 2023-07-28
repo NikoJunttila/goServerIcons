@@ -22,9 +22,7 @@ func handleDownload(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	// Provide the folder path containing the icons (adjust it according to your setup)
 	iconFolder := fmt.Sprintf("./icons/%s/", data.Theme)
-	fmt.Println(data.Icons)
 	// Create a buffer to store the zip file content
 	zipBuffer := new(bytes.Buffer)
 
@@ -38,8 +36,7 @@ func handleDownload(w http.ResponseWriter, r *http.Request) {
 		}
 		fileName := filepath.Base(path)
 		fileNameWithoutExtension := strings.TrimSuffix(fileName, filepath.Ext(fileName))
-		if !info.IsDir() && containsString(data.Icons, fileNameWithoutExtension) {
-			fmt.Println(fileNameWithoutExtension)
+		if !info.IsDir() && containsString(data.Icons, fileNameWithoutExtension) || info.Name() == "index.theme" {
 			file, err := os.Open(path)
 			if err != nil {
 				return err
