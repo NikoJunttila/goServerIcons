@@ -23,7 +23,8 @@ func serveIcons(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	icons := getIcons(fmt.Sprintf("./icons/%s/", selectedValue), "", 40)
+	domain := r.Host
+	icons := getIcons(fmt.Sprintf("./icons/%s/", selectedValue), "", 40, domain)
 	err := json.NewEncoder(w).Encode(icons)
 	if err != nil {
 		http.Error(w, "Couldn't encode JSON", http.StatusInternalServerError)
@@ -70,7 +71,8 @@ func searchIcons(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("error oopsie")
 	}
-	icons := getIcons(fmt.Sprintf("./icons/%s/", data.Theme), data.SearchTerm, 1000)
+	domain := r.Host
+	icons := getIcons(fmt.Sprintf("./icons/%s/", data.Theme), data.SearchTerm, 1000, domain)
 	// Sending the response back to the client as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(icons)

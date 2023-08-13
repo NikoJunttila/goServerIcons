@@ -17,7 +17,7 @@ type Icon struct {
 	SIZE string `json:"size"`
 }
 
-func getIcons(folderPath string, searchTerm string, limit int) []Icon {
+func getIcons(folderPath string, searchTerm string, limit int, domain string) []Icon {
 	var icons []Icon
 
 	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
@@ -35,7 +35,7 @@ func getIcons(folderPath string, searchTerm string, limit int) []Icon {
 					fileName := filepath.Base(path)
 					fileNameWithoutExtension := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 					newIcon.Name = fileNameWithoutExtension
-					newIcon.URL = "http://localhost:8080/" + path
+					newIcon.URL = "http://" + domain + "/" + path
 					newIcon.SIZE = getResolution(path)
 					icons = append(icons, newIcon)
 					if len(icons) > limit {
