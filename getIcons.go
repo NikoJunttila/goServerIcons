@@ -30,12 +30,13 @@ func getIcons(folderPath string, searchTerm string, limit int, domain string) []
 				strings.HasSuffix(strings.ToLower(info.Name()), ".png") ||
 				strings.HasSuffix(strings.ToLower(info.Name()), ".jpg") ||
 				strings.HasSuffix(strings.ToLower(info.Name()), ".jpeg") {
-				if searchTerm == "" || strings.Contains(strings.ToLower(info.Name()), strings.ToLower(searchTerm)) {
+				if searchTerm == "" ||
+					strings.Contains(strings.ToLower(info.Name()), strings.ToLower(searchTerm)) {
 					var newIcon Icon
 					fileName := filepath.Base(path)
 					fileNameWithoutExtension := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 					newIcon.Name = fileNameWithoutExtension
-					newIcon.URL = "http://" + domain + "/" + path
+					newIcon.URL = "https://" + domain + "/" + path
 					newIcon.SIZE = getResolution(path)
 					icons = append(icons, newIcon)
 					if len(icons) > limit {
@@ -95,7 +96,6 @@ func containsString(arr []string, target string) bool {
 }
 
 func getResolution(imagePath string) string {
-
 	if filepath.Ext(imagePath) == ".svg" {
 		baseFolderName := getBaseFolderName(imagePath)
 		if strings.Contains(baseFolderName, "@") {
@@ -121,6 +121,7 @@ func getResolution(imagePath string) string {
 	}
 	return strconv.Itoa(img.Width) + "x" + strconv.Itoa(img.Height)
 }
+
 func getBaseFolderName(filePath string) string {
 	dir := filepath.Dir(filePath)
 	base := filepath.Base(dir)
