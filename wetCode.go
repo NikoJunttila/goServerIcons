@@ -49,7 +49,8 @@ func iconsFromListOfNames(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	icons := getIconsFromArray(fmt.Sprintf("./icons/%s/", data.Theme), data.Icons)
+  domain := r.Host
+	icons := getIconsFromArray(fmt.Sprintf("./icons/%s/", data.Theme), data.Icons,domain)
 	// Sending the response back to the client as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(icons)

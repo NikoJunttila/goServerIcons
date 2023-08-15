@@ -36,7 +36,7 @@ func getIcons(folderPath string, searchTerm string, limit int, domain string) []
 					fileName := filepath.Base(path)
 					fileNameWithoutExtension := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 					newIcon.Name = fileNameWithoutExtension
-					newIcon.URL = "https://" + domain + "/" + path
+					newIcon.URL = "http://" + domain + "/" + path
 					newIcon.SIZE = getResolution(path)
 					icons = append(icons, newIcon)
 					if len(icons) > limit {
@@ -53,7 +53,7 @@ func getIcons(folderPath string, searchTerm string, limit int, domain string) []
 	return icons
 }
 
-func getIconsFromArray(folderPath string, containsArr []string) []Icon {
+func getIconsFromArray(folderPath string, containsArr []string, domain string) []Icon {
 	var icons []Icon
 
 	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
@@ -71,7 +71,8 @@ func getIconsFromArray(folderPath string, containsArr []string) []Icon {
 				fileNameWithoutExtension := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 				if containsString(containsArr, fileNameWithoutExtension) {
 					newIcon.Name = fileNameWithoutExtension
-					newIcon.URL = "http://localhost:8080/" + path
+					newIcon.URL = "http://" + domain + "/" + path
+					newIcon.SIZE = getResolution(path)
 					newIcon.SIZE = getResolution(path)
 					icons = append(icons, newIcon)
 				}
